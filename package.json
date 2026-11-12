@@ -33,6 +33,7 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
+    "roots": ["<rootDir>/test"],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
     ]
