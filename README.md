@@ -1,6 +1,8 @@
 # Full Stack open CI/CD
 
-This repository is used for the CI/CD module of the Full Stack Open course
+This repository is used for the CI/CD module of the Full Stack Open course.
+
+Live deployment here: https://full-stack-open-part-11-pokedex.onrender.com
 
 ## Commands
 
