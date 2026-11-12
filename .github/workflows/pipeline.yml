@@ -22,5 +22,4 @@ jobs:
     - name: Run jest test
       run: npm run test
     - name: Trigger deployment
-      run: curl ${{ secrets.RENDER_DEPLOYMENT_HOOK }}
-    
+      run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
