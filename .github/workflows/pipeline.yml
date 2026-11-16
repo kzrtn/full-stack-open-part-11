@@ -29,7 +29,7 @@ jobs:
       run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
   tag_release:
     needs: [simple_deployment_pipeline]
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
