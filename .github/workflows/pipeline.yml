@@ -51,6 +51,7 @@ jobs:
       run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
   discord_status:
     needs: [jest_test_and_deploy, playwright_tests]
+    if: always()
     runs-on: ubuntu-latest
     environment: DISCORD
     steps:
@@ -58,10 +59,7 @@ jobs:
         uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ github.event.workflow_run.conclusion == 'success' && 'success' || github.event.workflow_run.conclusion == 'cancelled' && 'cancelled' || 'failure' }}
-          title: ${{ github.event.workflow_run.name }}
-          description: ${{ github.event.workflow_run.head_branch }} @ ${{ github.event.workflow_run.head_sha }}
-          url: ${{ github.event.workflow_run.html_url }}
+          status: ${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
   tag_release:
     needs: [jest_test_and_deploy, playwright_tests]
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
@@ -70,9 +68,6 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v6
-      with:
-        ref: ${{ github.event.pull_request.merge_commit_sha }}
-        fetch-depth: '0'
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.75.0
       env:
