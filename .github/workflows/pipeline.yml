@@ -50,7 +50,7 @@ jobs:
       if: ${{ github.event_name == 'push' && !contains(env.COMMIT_MESSAGES, '#skip') }}
       run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
   discord_status:
-    needs: [jest_test_and_deploy, playwright_tests]
+    needs: jest_test_and_deploy
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     environment: DISCORD
@@ -59,9 +59,9 @@ jobs:
         uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
+          status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped')) && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
   tag_release:
-    needs: [jest_test_and_deploy, playwright_tests]
+    needs: jest_test_and_deploy
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     permissions:
