@@ -2,7 +2,7 @@ name: Discord Actions pipeline
 
 on:
   workflow_run:
-    workflows: ["Testing stuff", "Playwright Tests", "Hello World!", "Deployment pipeline"]
+    workflows: ["Playwright Tests", "Deployment pipeline"]
     types: [completed]
 
 jobs:
