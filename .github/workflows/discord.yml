@@ -1,0 +1,20 @@
+name: Discord Actions pipeline
+
+on:
+  workflow_run:
+    workflows: ["Playwright Tests", "Deployment pipeline"]
+    types: [completed]
+
+jobs:
+  discord_status:
+    runs-on: ubuntu-latest
+    environment: DISCORD
+    steps:
+      - name: Actions Status Discord
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ github.event.workflow_run.conclusion == 'success' && 'success' || github.event.workflow_run.conclusion == 'cancelled' && 'cancelled' || 'failure' }}
+          title: ${{ github.event.workflow_run.name }}
+          description: ${{ github.event.workflow_run.head_branch }} @ ${{ github.event.workflow_run.head_sha }}
+          url: ${{ github.event.workflow_run.html_url }}
