@@ -20,7 +20,7 @@ jobs:
       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
       with:
         # Discord webhook endpoint. If not set, env.DISCORD_WEBHOOK will be used.
-        webhook: # optional
+        webhook: ${{ secrets.GITHUB_TOKEN }}
         # Job status. Should be bound to job.status. Default to success.
         status: # optional, default is ${{ job.status }}
         # Deprecated. Job name included in message title. Same as title input.
