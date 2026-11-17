@@ -1,12 +1,9 @@
 name: Discord Actions pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
+  workflow_run:
+    workflows: ["Testing stuff", "Playwright Tests", "Hello World!", "Deployment pipeline"]
+    types: [completed]
 
 jobs:
   discord_status:
@@ -24,21 +21,19 @@ jobs:
         # Discord webhook endpoint. If not set, env.DISCORD_WEBHOOK will be used.
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         # Job status. Should be bound to job.status. Default to success.
-        status: ${{ job.status }}
-        # Deprecated. Job name included in message title. Same as title input.
-        job: # optional
+        status: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'cancelled' && 'cancelled' || 'failure' }}
         # Content. Shown as an message outside of the embed. See [Mention to user/role](#mention-to-user-role)
         content: # optional
         # String included in embed title. Overrides job input.
-        title: ${{ github.workflow }}
+        title: ${{ github.event.workflow_run.name }}
         # Description included in message
-        description: # optional
+        description: ${{ github.event.workflow_run.head_branch }} @ ${{ github.event.workflow_run.head_sha }}
         # Image attached to the message
         image: # optional
         # Overrides Discord embed color
         color: # optional
         # URL to jump when the title is clicked
-        url: # optional
+        url: ${{ github.event.workflow_run.html_url }}
         # Overrides Discord webhook username
         username: # optional
         # Overrides Discord webhook avatar url
