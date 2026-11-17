@@ -19,4 +19,4 @@ const start = async () => {
   console.log(`server started on port ${PORT}`)
 }
 
-start()
+start
