@@ -11,12 +11,14 @@ on:
 jobs:
   discord_status:
     runs-on: ubuntu-latest
+    environment: DISCORD
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
       with:
         node-version: '24'
     - name: Actions Status Discord
+      if: always()
       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
       with:
         # Discord webhook endpoint. If not set, env.DISCORD_WEBHOOK will be used.
