@@ -51,7 +51,7 @@ jobs:
       run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
   discord_status:
     needs: jest_test_and_deploy
-    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    if: always()
     runs-on: ubuntu-latest
     environment: DISCORD
     steps:
