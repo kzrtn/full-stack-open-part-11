@@ -22,13 +22,13 @@ jobs:
         # Discord webhook endpoint. If not set, env.DISCORD_WEBHOOK will be used.
         webhook: ${{ secrets.GITHUB_TOKEN }}
         # Job status. Should be bound to job.status. Default to success.
-        status: # optional, default is ${{ job.status }}
+        status: ${{ job.status }}
         # Deprecated. Job name included in message title. Same as title input.
         job: # optional
         # Content. Shown as an message outside of the embed. See [Mention to user/role](#mention-to-user-role)
         content: # optional
         # String included in embed title. Overrides job input.
-        title: # optional, default is ${{ github.workflow }}
+        title: ${{ github.workflow }}
         # Description included in message
         description: # optional
         # Image attached to the message
