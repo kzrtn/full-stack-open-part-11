@@ -9,7 +9,27 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  playwright_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v5
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+  jest_test_and_deploy:
+    needs: [playwright_tests]
     runs-on: ubuntu-latest
     env:
       COMMIT_MESSAGES: ${{ join(github.event.commits.*.message, ' ') }}
@@ -29,17 +49,25 @@ jobs:
     - name: Trigger deployment
       if: ${{ github.event_name == 'push' && !contains(env.COMMIT_MESSAGES, '#skip') }}
       run: curl -fsS "${{ secrets.RENDER_DEPLOY_HOOK }}"
+  discord_status:
+    needs: jest_test_and_deploy
+    if: always()
+    runs-on: ubuntu-latest
+    environment: DISCORD
+    steps:
+      - name: Actions Status Discord
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped')) && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
   tag_release:
-    needs: [simple_deployment_pipeline]
+    needs: jest_test_and_deploy
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
     - uses: actions/checkout@v6
-      with:
-        ref: ${{ github.event.pull_request.merge_commit_sha }}
-        fetch-depth: '0'
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.75.0
       env:
