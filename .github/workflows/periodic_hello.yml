@@ -12,4 +12,4 @@ jobs:
       - name: URL Health Check
         uses: Jtalk/url-health-check-action@v5
         with:
-          url: https://full-stack-open-part-11-pokedex.onrender.com/healt
+          url: https://full-stack-open-part-11-pokedex.onrender.com/health
