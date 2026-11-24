@@ -4,6 +4,8 @@ This repository is used for the CI/CD module of the Full Stack Open course.
 
 Live deployment here: https://full-stack-open-part-11-pokedex.onrender.com
 
+The repo for exercise 22: https://github.com/kzrtn/bloglist
+
 ## Commands
 
 Start by running `npm install` inside the project folder
